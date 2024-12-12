@@ -26,10 +26,7 @@ export default function RootLayout({
             </h1>
             <ul className="flex space-x-4">
               <li>
-                <Link
-                  href="/characters"
-                  className="hover:text-yellow-400 transition"
-                >
+                <Link href="" className="hover:text-yellow-400 transition">
                   Characters
                 </Link>
               </li>
