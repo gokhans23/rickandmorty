@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Creepster } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+
+const creepster = Creepster({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   title: "Rick and Morty Universe",
@@ -15,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-gray-900 text-white font-sans">
+      <body className={`bg-gray-900 text-white ${creepster.className}`}>
         <nav className="bg-gray-800 p-4 shadow-md">
           <div className="container mx-auto flex justify-between items-center">
             <h1 className="text-2xl font-bold text-yellow-400">
@@ -23,7 +26,10 @@ export default function RootLayout({
             </h1>
             <ul className="flex space-x-4">
               <li>
-                <Link href="/" className="hover:text-yellow-400 transition">
+                <Link
+                  href="/characters"
+                  className="hover:text-yellow-400 transition"
+                >
                   Characters
                 </Link>
               </li>
