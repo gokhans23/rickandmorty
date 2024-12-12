@@ -3,6 +3,8 @@ import { Creepster } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 
+export const runtime = "edge";
+
 const creepster = Creepster({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
