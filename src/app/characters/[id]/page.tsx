@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 interface Character {
   id: number;
@@ -28,6 +29,7 @@ interface Location {
 }
 
 interface Episode {
+  id: string;
   name: string;
   air_date: string;
   episode: string;
@@ -110,7 +112,9 @@ const CharacterDetailPage = async ({ params }: { params: { id: string } }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {episodes.map((episode, index) => (
               <div key={index} className="bg-gray-700 p-4 rounded-lg shadow-md">
-                <h3 className="text-lg font-bold">{episode.name}</h3>
+                <Link href={`/episodes/${episode.id}`} key={episode.id}>
+                  <h3 className="text-lg font-bold">{episode.name}</h3>
+                </Link>
                 <p>
                   <span className="font-bold">Air Date:</span>{" "}
                   {episode.air_date}
