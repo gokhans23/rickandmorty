@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-
+export const runtime = "edge";
 interface Location {
   id: number;
   name: string;
