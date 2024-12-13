@@ -1,4 +1,5 @@
 "use client";
+
 import {
   CharactersState,
   setCharacters,
@@ -10,7 +11,6 @@ import { AppDispatch, RootState } from "@/store/store";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-export const runtime = "edge";
 
 interface Character {
   id: number;
@@ -20,33 +20,22 @@ interface Character {
   image: string;
 }
 
-interface CharactersPageProps {
-  characters: Character[];
-  totalCount: number;
-  currentPage: number;
-  totalPages: number;
-}
-
-const CharactersPage = async ({
+const CharactersPage = ({
   searchParams,
 }: {
   searchParams: { status?: string; gender?: string; page?: string };
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    characters,
-    totalPages,
-    currentPage,
-    loading,
-    error,
-  }: CharactersState = useSelector(
+  const { characters, totalPages, currentPage, loading, error } = useSelector(
     (state: RootState) => state.characters
-  ) as CharactersState;
+  );
+
   const status = searchParams.status || "";
   const gender = searchParams.gender || "";
   const page = parseInt(searchParams.page || "1", 10);
 
   useEffect(() => {
+    // Async function burada tanımlanmalı
     const fetchCharacters = async () => {
       try {
         dispatch(setLoading(true));
@@ -64,8 +53,6 @@ const CharactersPage = async ({
         dispatch(setLoading(false));
       }
     };
-
-    fetchCharacters();
   }, [dispatch, status, gender, page]);
 
   if (loading) {
