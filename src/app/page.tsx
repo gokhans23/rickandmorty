@@ -1,5 +1,15 @@
-import { Metadata } from "next";
+"use client";
+import {
+  CharactersState,
+  setCharacters,
+  setError,
+  setLoading,
+} from "@/store/slices/charactersSlice";
+import { AppDispatch, RootState } from "@/store/store";
+
 import Link from "next/link";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 export const runtime = "edge";
 
 interface Character {
@@ -17,35 +27,54 @@ interface CharactersPageProps {
   totalPages: number;
 }
 
-export const metadata: Metadata = {
-  title: "Rick and Morty Characters",
-};
-
-const fetchCharacters = async (
-  status: string,
-  gender: string,
-  page: number
-) => {
-  const apiUrl = `https://rickandmortyapi.com/api/character/?status=${status}&gender=${gender}&page=${page}`;
-  const res = await fetch(apiUrl);
-  if (!res.ok) {
-    throw new Error("Failed to fetch characters");
-  }
-  return res.json();
-};
-
 const CharactersPage = async ({
   searchParams,
 }: {
   searchParams: { status?: string; gender?: string; page?: string };
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    characters,
+    totalPages,
+    currentPage,
+    loading,
+    error,
+  }: CharactersState = useSelector(
+    (state: RootState) => state.characters
+  ) as CharactersState;
   const status = searchParams.status || "";
   const gender = searchParams.gender || "";
   const page = parseInt(searchParams.page || "1", 10);
 
-  const data = await fetchCharacters(status, gender, page);
-  const totalPages = data.info.pages;
-  const currentPage = Math.min(page, totalPages);
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      try {
+        dispatch(setLoading(true));
+        const response = await fetch(
+          `https://rickandmortyapi.com/api/character/?status=${status}&gender=${gender}&page=${page}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch characters");
+        }
+        const data = await response.json();
+        dispatch(setCharacters({ results: data.results, info: data.info }));
+      } catch (err: any) {
+        dispatch(setError(err.message));
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+
+    fetchCharacters();
+  }, [dispatch, status, gender, page]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const paginationLinks = [];
   if (currentPage > 1) paginationLinks.push(1);
@@ -101,7 +130,7 @@ const CharactersPage = async ({
       </form>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
-        {data.results.map((character: Character) => (
+        {characters.map((character: Character) => (
           <Link href={`/characters/${character.id}`} key={character.id}>
             <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col items-center cursor-pointer hover:bg-gray-700 transition">
               <img

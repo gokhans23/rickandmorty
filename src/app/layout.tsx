@@ -1,17 +1,13 @@
-import type { Metadata } from "next";
+"use client";
 import { Creepster } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import { store } from "@/store/store";
+import { Provider } from "react-redux";
 
 export const runtime = "edge";
 
 const creepster = Creepster({ subsets: ["latin"], weight: "400" });
-
-export const metadata: Metadata = {
-  title: "Rick and Morty Universe",
-  description:
-    "Explore characters, locations, and episodes from the Rick and Morty universe",
-};
 
 export default function RootLayout({
   children,
@@ -51,7 +47,9 @@ export default function RootLayout({
             </ul>
           </div>
         </nav>
-        <main className="container mx-auto p-4">{children}</main>
+        <Provider store={store}>
+          <main className="container mx-auto p-4">{children}</main>
+        </Provider>
       </body>
     </html>
   );
